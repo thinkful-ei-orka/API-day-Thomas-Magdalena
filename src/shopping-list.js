@@ -73,10 +73,13 @@ const handleDeleteItemClicked = function () {
     // get the index of the item in store.items
     const id = getItemIdFromElement(event.currentTarget);
     // delete the item
-    store.findAndDelete(id);
-    // render the updated shopping list
-    render();
-  });
+    api.deleteItem(id)
+    .then(res => res.json())
+    .then(data => {
+      store.findAndDelete(id);
+      render();
+    });
+    });
 };
 
 const handleEditShoppingItemSubmit = function () {
@@ -84,19 +87,28 @@ const handleEditShoppingItemSubmit = function () {
     event.preventDefault();
     const id = getItemIdFromElement(event.currentTarget);
     const itemName = $(event.currentTarget).find('.shopping-item').val();
-    api.updateItem(id, itemName)
+    let item = store.findById(id);
+    item.name = itemName;
+    api.updateItem(id, {name:item.name})
     .then(res => res.json())
-    .then(data) => {
-      store.findAndUpdate(id, itemName);
+    .then((data) => {
+      store.findAndUpdate(id, item);
       render();
-    };
   });
+});
 };
 
 const handleItemCheckClicked = function () {
   $('.js-shopping-list').on('click', '.js-item-toggle', event => {
     const id = getItemIdFromElement(event.currentTarget);
-    render();
+    let item = store.findById(id);
+    item.checked = !item.checked;
+    api.updateItem(id, {checked:item.checked})
+    .then(res => res.json())
+    .then(data => {
+      store.findAndUpdate(id, item);
+      render();
+    });
   });
 };
 

@@ -21,9 +21,20 @@ const updateItem = function(id, updateData) {
     });
 };
 
+const deleteItem = function(id) {
+    let deletedItem = JSON.stringify(id);
+    return fetch(`${BASE_URL}/items/${id}`,
+    {method: 'DELETE',
+    headers: {'Content-Type': 'applictaion/json'},
+    body: deletedItem
+    });
+};
+
+
 export default {
     getItems,
     createItem,
-    updateItem
+    updateItem,
+    deleteItem
 };
 
